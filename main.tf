@@ -36,14 +36,14 @@ resource "azurerm_resource_group" "gdpr_openai_rg" {
     }
 }
 
-# Service Plan
-resource "azurerm_service_plan" "gdpr_app_service_plan" {
-  name                = "asp-gdpr-openai"
-  location            = azurerm_resource_group.gdpr_openai_rg.location
-  resource_group_name = azurerm_resource_group.gdpr_openai_rg.name
-  os_type             = "Linux"
-  sku_name = "S1"
-}
+# # Service Plan
+# resource "azurerm_service_plan" "gdpr_app_service_plan" {
+#   name                = "asp-gdpr-openai"
+#   location            = azurerm_resource_group.gdpr_openai_rg.location
+#   resource_group_name = azurerm_resource_group.gdpr_openai_rg.name
+#   os_type             = "Linux"
+#   sku_name = "S1"
+# }
 
 # Network Security Group for additional protection
 resource "azurerm_network_security_group" "gdpr_nsg" {
@@ -236,6 +236,10 @@ resource "azurerm_linux_web_app" "gdpr_webapp" {
   location            = azurerm_resource_group.gdpr_openai_rg.location
   resource_group_name = azurerm_resource_group.gdpr_openai_rg.name
   service_plan_id     = azurerm_service_plan.gdpr_app_service_plan.id
+
+  identity {
+    type = "SystemAssigned"
+  }
   site_config {
     #linux_fx_version    = "DOCKER|mcr.microsoft.com/azure-app-service/samples/aspnetcore"
     health_check_path = "/health"
@@ -250,4 +254,14 @@ resource "azurerm_linux_web_app" "gdpr_webapp" {
     environment = "production"
     compliance  = "gdpr"
   }
+}
+
+resource "azurerm_service_plan" "gdpr_app_service_plan" {
+  name                = "asp-gdpr-openai"
+  location            = azurerm_resource_group.gdpr_openai_rg.location
+  resource_group_name = azurerm_resource_group.gdpr_openai_rg.name
+  os_type             = "Linux"
+  zone_balancing_enabled = true
+  sku_name            = "S1"
+  worker_count   = 2
 }
