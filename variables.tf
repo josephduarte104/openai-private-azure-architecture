@@ -3,7 +3,7 @@
 variable "location" {
   description = "Azure region for deploying resources"
   type        = string
-  default     = "westeurope"  # GDPR-friendly region
+  default     = "eastus"  # GDPR-friendly region
 }
 
 variable "allowed_ips" {
@@ -21,7 +21,7 @@ variable "data_retention_days" {
 variable "environment" {
   description = "Deployment environment"
   type        = string
-  default     = "production"
+  default     = "POC"
 }
 
 variable "privacy_contact_email" {

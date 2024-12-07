@@ -6,7 +6,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.100.0"
+      version = ">= 4.9.0"
     }
   }
 }
@@ -182,7 +182,7 @@ resource "azurerm_cognitive_account" "gdpr_openai" {
   location            = azurerm_resource_group.gdpr_openai_rg.location
   resource_group_name = azurerm_resource_group.gdpr_openai_rg.name
   kind                = "CognitiveServices"
-  sku_name            = "S1"
+  sku_name            = "S0"
 
   custom_subdomain_name = "gdpr-openai"
 
@@ -269,7 +269,7 @@ resource "azurerm_service_plan" "gdpr_app_service_plan" {
   os_type             = "Linux"
   zone_balancing_enabled = true
   sku_name            = "S1"
-  worker_count        = 2
+  worker_count        = 1
 }
 
 # Private Endpoint for Key Vault
