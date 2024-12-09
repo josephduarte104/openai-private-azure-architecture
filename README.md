@@ -1,4 +1,3 @@
-### Markdown Document
 
 #### Terraform Configuration for GDPR-Compliant Azure OpenAI Solution
 
