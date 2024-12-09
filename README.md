@@ -52,6 +52,11 @@ This Terraform configuration sets up a GDPR-compliant Azure OpenAI solution with
 16. **Private Endpoints**
     - Creates private endpoints for Key Vault, Cosmos DB, and Cognitive Services.
 
+
+## Architecture
+
+![Architecture Diagram](./images/openai-azure-private-arch.png)
+
 ### Instructions to Use a Service Principal to Login to Azure and Run Terraform
 
 1. **Create a Service Principal**
