@@ -1,9 +1,9 @@
-# variables.tf - Variables for GDPR-Compliant Azure OpenAI Solution
+# variables.tf - Variables for gdpr_jd-Compliant Azure OpenAI Solution
 
 variable "location" {
   description = "Azure region for deploying resources"
   type        = string
-  default     = "eastus"  # GDPR-friendly region
+  default     = "centralus"  # gdpr_jd-friendly region
 }
 
 variable "allowed_ips" {
@@ -15,7 +15,7 @@ variable "allowed_ips" {
 variable "data_retention_days" {
   description = "Number of days to retain user data"
   type        = number
-  default     = 365  # Align with GDPR requirements
+  default     = 365  # Align with gdpr_jd requirements
 }
 
 variable "environment" {
@@ -27,9 +27,10 @@ variable "environment" {
 variable "privacy_contact_email" {
   description = "Contact email for privacy and data protection inquiries"
   type        = string
+  default = "jduarte@m2cpro.com"
 }
 
-variable "gdpr_consent_required" {
+variable "gdpr_jd_consent_required" {
   description = "Indicates if explicit user consent is required"
   type        = bool
   default     = true
