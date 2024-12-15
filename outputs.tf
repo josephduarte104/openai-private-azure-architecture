@@ -45,11 +45,6 @@ output "openai_resource_group" {
     value       = azurerm_resource_group.gdpr_jd_openai_rg.name
 }
 
-output "front_door_hostname" {
-    description = "Front Door Hostname for Secure Access"
-    value       = azurerm_frontdoor.gdpr_jd_front_door.frontend_endpoint[0].host_name
-}
-
 output "key_vault_uri" {
     description = "Azure Key Vault URI for Encryption Keys and Secrets"
     value       = azurerm_key_vault.gdpr_jd_key_vault.vault_uri
@@ -58,4 +53,8 @@ output "key_vault_uri" {
 output "webapp_url" {
     description = "URL for Chat Interface"
     value       = azurerm_linux_web_app.gdpr_jd_webapp.default_hostname
+}
+
+output "front_door_hostname" {
+  value = azurerm_cdn_frontdoor_endpoint.gdpr_jd_front_door_endpoint.host_name
 }

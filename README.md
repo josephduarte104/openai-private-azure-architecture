@@ -110,3 +110,13 @@ This Terraform configuration sets up a GDPR-compliant Azure OpenAI solution with
    Confirm the apply action when prompted.
 
 By following these steps, you can use a Service Principal to authenticate with Azure and run your Terraform configuration.
+
+
+
+# Resources:
+
+
+### Create Front Door with terraform
+
+<https://learn.microsoft.com/en-us/azure/frontdoor/create-front-door-terraform>
+

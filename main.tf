@@ -70,53 +70,50 @@ resource "azurerm_network_security_group" "gdpr_jd_nsg" {
   }
 }
 
-# Azure Front Door for secure access
-resource "azurerm_frontdoor" "gdpr_jd_front_door" {
-  name                = "fdgdprjdopenaiaccessi"
+### Front Door Configuration ###
+resource "azurerm_cdn_frontdoor_profile" "gdpr_jd_front_door_profile" {
+  name                = "fdgdprjdopenaiaccessi-profile"
   resource_group_name = azurerm_resource_group.gdpr_jd_openai_rg.name
+  sku_name            = "Standard_AzureFrontDoor"
+}
 
-  routing_rule {
-    name               = "webapp-routing"
-    accepted_protocols = ["Https"]
-    patterns_to_match  = ["/*"]
-    frontend_endpoints = ["webapp-endpoint"]
-    forwarding_configuration {
-      forwarding_protocol = "HttpsOnly"
-      backend_pool_name   = "webapp-backend"
-    }
-  }
+resource "azurerm_cdn_frontdoor_endpoint" "gdpr_jd_front_door_endpoint" {
+  name                = "fdgdprjdopenaiaccessi-endpoint"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.gdpr_jd_front_door_profile.id
+}
 
-  backend_pool {
-    name                 = "webapp-backend"
-    health_probe_name    = "health-probe"
-    load_balancing_name  = "load-balancing-settings"
-    backend {
-      host_header = azurerm_linux_web_app.gdpr_jd_webapp.default_hostname
-      address     = azurerm_linux_web_app.gdpr_jd_webapp.default_hostname
-      http_port   = 80
-      https_port  = 443
-    }
-  }
-
-  backend_pool_health_probe {
-    name     = "health-probe"
-    protocol = "Https"
-    path     = "/health"
+resource "azurerm_cdn_frontdoor_origin_group" "gdpr_jd_front_door_origin_group" {
+  name                = "fdgdprjdopenaiaccessi-origin-group"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.gdpr_jd_front_door_profile.id
+  health_probe {
+    path               = "/health"
+    protocol           = "Https"
     interval_in_seconds = 30
   }
-
-  backend_pool_load_balancing {
-    name                            = "load-balancing-settings"
-    sample_size                     = 4
-    successful_samples_required     = 2
+  load_balancing {
+    sample_size                 = 4
+    successful_samples_required = 2
   }
+}
 
-  frontend_endpoint {
-    name      = "webapp-endpoint"
-    host_name = "fdgdprjdopenaiaccessi.azurefd.net"
-  }
+resource "azurerm_cdn_frontdoor_origin" "gdpr_jd_front_door_origin" {
+  name                = "fdgdprjdopenaiaccessi-origin"
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.gdpr_jd_front_door_origin_group.id
+  #host_name                     = azurerm_windows_web_app.gdpr_jd_webapp.default_hostname
+  host_name                     = azurerm_linux_web_app.gdpr_jd_webapp.default_hostname
+  https_port                    = 443
+  certificate_name_check_enabled = true
+}
 
-  # Enforce HTTPS and TLS 1.2+
+resource "azurerm_cdn_frontdoor_route" "gdpr_jd_front_door_route" {
+  name                        = "fdgdprjdopenaiaccessi-route"
+  cdn_frontdoor_origin_ids    = [azurerm_cdn_frontdoor_origin.gdpr_jd_front_door_origin.id]
+  cdn_frontdoor_endpoint_id   = azurerm_cdn_frontdoor_endpoint.gdpr_jd_front_door_endpoint.id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.gdpr_jd_front_door_origin_group.id
+  supported_protocols         = ["Http", "Https"]
+  patterns_to_match           = ["/*"]
+  forwarding_protocol         = "HttpsOnly"
+  https_redirect_enabled      = true
 }
 
 # Cosmos DB Account with Strong Encryption and Access Controls
